@@ -2,8 +2,8 @@
 %  In case you need support, please attach all files that are necessary for compiling as well as the log file, and specify the details of your LaTeX setup (which operating system and LaTeX version / tools you are using).
 
 %=================================================================
-\documentclass[preprints,article,accept,moreauthors,pdftex]{Definitions/mdpi} 
-%\documentclass[aerospace,article,submit,moreauthors,pdftex]{Definitions/mdpi} 
+%\documentclass[preprints,article,accept,moreauthors,pdftex]{Definitions/mdpi} 
+\documentclass[aerospace,article,submit,moreauthors,pdftex]{Definitions/mdpi} 
 
 % If you would like to post an early version of this manuscript as a preprint, you may use preprint as the journal and change 'submit' to 'accept'. The document class line would be, e.g., \documentclass[preprints,article,accept,moreauthors,pdftex]{mdpi}. This is especially recommended for submission to arXiv, where line numbers should be removed before posting. For preprints.org, the editorial staff will make this change immediately prior to posting.
 
@@ -39,6 +39,9 @@
 % subfigures
 \usepackage{caption}
 \usepackage{subcaption}
+
+% revision highlights
+\newcommand{\revision}[1]{\color{black}{#1 }\color{black}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -103,7 +106,7 @@
 
 %=================================================================
 % Full title of the paper (Capitalized)
-\Title{Design Space Exploration of a Turbojet Part using a Combined Object Model for Function and Geometry}
+\Title{Design Space Exploration of a Jet Engine Component using a Combined Object Model for Function and Geometry}
 
 % Author Orchid ID: enter ID or remove command
 \newcommand{\orcidauthorA}{0000-0002-2270-6253} % Add \orcidA{} behind the author's name
@@ -133,18 +136,19 @@ $^{1}$ \quad Chalmers University of Technology, Gothenburg}
 %\conference{} % An extended version of a conference paper
 
 % Abstract (Do not insert blank lines, i.e. \\) 
-\abstract{Product development, especially in the development of aerospace components, hinges on the use of CAD models and the subsequent geometry-based analyses for evaluation of the quality of a concept.
-However, the generation (and variation) of a CAD model to include radical or novel design solutions is an expensive modelling effort.
-To support this a combined function and geometry modelling approach, enabling the automated
-generation of CAD models of variant concepts, is proposed and developed. The approach is used in the conceptual development phase of a part for a turbofan engine - an outlet guide vane (OGV) - in collaboration with an aerospace manufacturer.
-The approach is tested through workshops, in which industrial practitioner interact with a tool that embeds the presented approach for function and geometry modelling. 
-The practitioners used the approach to explore novel solutions and configurations. 
-The evaluation activities with the industrial practitioners through interviews and questionnaires point to the potential of the approach in terms of 
-1) ability to provide clear and explicit  illustration of the design rationale of the product 
-2) ability to capture, integrate and model novel solutions and 
-3) ability to provide a clear connection between the abstract functional and the concrete geometrical domain, which has the potential to foster innovation.
+\abstract{The design of aircraft and engine components hinges on the use of CAD models and the subsequent geometry-based analyses for evaluation of the quality of a concept.
+However, the generation (and variation) of a CAD model to include radical or novel design solutions is a resource intense modelling effort.
+To support the exploration of more functional and topological different product concepts, a combined function and geometry modelling approach, enabling the automated generation of CAD models, has been proposed and developed. 
+A novel method for associative Function and Geometry Exploration (FGE) has been applied and first validated in a conceptual design study of a Guide Vane (GV) of a turbofan engine. 
+The FGE method and its software tool implementation were introduced and used by the design team in a conceptual study where conceptually different alternatives for identifying alternatives to meet the expected functionality of the GV.
+The FGE was introduced and use in a series of design team workshops and through participatory observation in the design teams by the researchers. The applicability and validity of FGE as a design method was in addition evaluated using interviewing the design team participants and through questionnaires. 
+The results reveal the  potential of the FGE approach as a design support to:
+1) represent and capture the design rationale and the design space
+2) capture, integrate and model novel solutions and 
+3) provide support for the embodiment of novel concepts that would otherwise remain unexplored.
+In conclusion, the FGE method help designers to articulate and link the design rationale and functionality requirements to geometrical embodiment of alternative conceptual solutions. The FGE tool, which is still in a laboratory state, required facilitation by researchers, yet showed to be sufficiently capable of generating and representing the alternatives studied in real time.
 }
-
+%% Reset all acronyms for main part:
 % Keywords
 \keyword{Product development process, Design space exploration, Function modelling, CAD, Aerospace}
 
@@ -177,6 +181,7 @@ The evaluation activities with the industrial practitioners through interviews a
 \begin{document}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%\acresetall
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \setcounter{section}{-1} %% Remove this when starting to work on the template.
 % \section{How to Use this Template}
@@ -184,31 +189,40 @@ The evaluation activities with the industrial practitioners through interviews a
 % %The order of the section titles is: Introduction, Materials and Methods, Results, Discussion, Conclusions for these journals: aerospace,algorithms,antibodies,antioxidants,atmosphere,axioms,biomedicines,carbon,crystals,designs,diagnostics,environments,fermentation,fluids,forests,fractalfract,informatics,information,inventions,jfmk,jrfm,lubricants,neonatalscreening,neuroglia,particles,pharmaceutics,polymers,processes,technologies,viruses,vision
 
 \section{Introduction}
-The development of new aerospace components often relies on an improvement and refinement of an existing "legacy design".
-However, due to rising challenges in terms of regulation and environmental requirements \cite{ACARE2017StrategicAgenda}, there is a need to explore and evaluate more radical design concepts, both on engine level \cite{Filipenko2020ComparativeSystems, Parker2010GreenEnvironment} and component level \cite{Sjunnesson2019}. 
-Also, manufactures are interested to introduce new functions in their products in order to maintain competitiveness in the market. 
+The development of new components for aircraft engines often relies on an improvement and refinement of an existing "legacy design".
+To be able to meet the targets set by Flightpath 2050 \cite{ACARE2017StrategicAgenda}, manufacturers need to explore and develop conceptually new designs.
+Such novel concepts are required both on aircraft and engine system level, but equally on component level.
+
+Radically new concepts need to be evaluated first, which in the case of developing physical products requires and embodiment in a sufficient level of details for engineering analysis.
+For the development of mechanical components for an aeroengine, this means that a geometry model of each concept to be evaluated needs to be created. 
+
+Examples for this are the open rotor design \cite{Larsson2006ComponentInnovation}, which displays range of new product functions which need to be embodied into design solutions.
+ Electrical and Hybrid propulsion designs bring new arrangements and require new functions to be met by the engine components
+ \cite{Filipenko2020ComparativeSystems, Parker2010GreenEnvironment}. 
+%Also, manufactures are interested to introduce new functions in their products in order to maintain competitiveness in the market. 
 
 % need for DSE
 To be able to develop novel products outside the already known design space, developers need reliable methods and tools that support them in the generation of concepts and models as well as their analysis and evaluation \cite{Woodbury2006, Kang2011, Isaksson2016}.
 % currently available tools insufficient
 Currently available -- and applied -- methods such as parameterisation \citep{VanDerLaan2005ParametricAnalysis} or \ac{KBE} \cite{Sandberg2011} cover only a dimensional variation of existing concepts or require an expensive setup of a master model.
 Therefore, these geometry based approaches only allow for the exploration of a subset of the available design space \citep{Woodbury2006, Muller2019ICED}.
-To enable a systematic, wide and efficient design space exploration \ac{DSE}, an approach connecting function and geometry models - enabling enabling the automated
-generation of CAD models of variant concepts - has been recently developed.
-The approach is called \textit{\acf{FGE}}  \cite{Muller2021FunctionVariants}.
+To enable a systematic, wide and efficient \ac{DSE}, an approach connecting function and geometry models, \ac{FGE}, has been developed \cite{Muller2021FunctionVariants}.
+\Ac{FGE} enables the automated generation of CAD models of variant concepts.
 The approach aims to enable a parallel development approach in both, the functional and geometrical, domains.
-This can enable product developers to associate the geometry directly with the function it fulfils and vice versa, investigate into novel concepts and analyse them.
+The approach enables product developers to associate the geometry directly with the function it fulfils and vice versa, supporting the investigation into novel concepts and their evaluation.
 % Therefore, new solutions can be integrated for specific functional requirements, while allowing to only alter the related geometry and observing the impact of the alteration onto the product as a system.
 % Furthermore does the approach allow to trace changes in requirements and functions onto the product's geometry, enabling a more precise redesign process in the case of requirement changes.
 
 % paper overview
-This publication reports from an qualitative study about the application of the \ac{FGE} approach in a development project for a static turbine structure, a fan frame \ac{OGV}. 
-The study has been conducted in collaboration with an aerospace manufacturer. 
+This publication reports from an qualitative study about the application of the \ac{FGE} approach in a development project for a static turbine structure, a fan frame \ac{GV}. 
+The study has been conducted in tight collaboration with an aerospace manufacturer. 
 The study investigates into whether the proposed method does \textit{improve \ac{DSE}} in that it enables the \textit{capture}, \textit{representation} and \textit{embodiment} of novel design concepts.
 
 %Section \ref{sec:background} explains the relevant technologies which the approach is build or that are comparable in functionality.
+
+The \ac{FGE} approach itself is shortly explained in Section \ref{sec:omfgDSE}.
 How the study has been setup and how the approach has been evaluated is explained in Section \ref{sec:method}.
-The \ac{FGE} approach itself is shortly explained in Section \ref{sec:omfgDSE}, while the application of it in the industrial setting in Section \ref{sec:results}. 
+The application of \ac{FGE} in the industrial setting is presented in Section \ref{sec:results}. 
 The practitioners' evaluation and reflections on the application of the approach on the industrial use case  are presented in Section \ref{sec:feedback}.
 Section \ref{sec:discussion} discusses these results in relation to the problematic described above as well as compared to similar approaches.
 Lastly, section \ref{sec:conclusions} summarises the contribution of this paper and proposes further development of the approach.
@@ -249,39 +263,39 @@ Lastly, section \ref{sec:conclusions} summarises the contribution of this paper 
 % }
  
 
-% \subsection{Design automation}
+\subsection{CAD literature to be added}
+\citep{Camba2016a}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{The FGE approach}\label{sec:omfgDSE}
 % EF-M
-The \acf{FGE} approach builds on the function modelling method \ac{EF-M} and combines it with a \ac{DA} approach based on \acp{UDF}, realised in the CAD software Siemens NX. 
+The \acf{FGE} approach combines the \textit{FGE method}, an approach for methodically exploring the design space, with the \textit{FGE tool}, an implementation of the major mechanics of the method.
+While the method can theoretically be performed without a software tool, computer support in form of the tool is recommended, especially for the development more complex products such as aeroengine components.
+The approach builds on the function modelling method \ac{EF-M} modelling and combines it with a \ac{DA} approach based on \acp{UDF}, realised in the CAD software Siemens NX. 
 One main assumption behind the approach is that every geometrical element in a product has a specific function \citep{Gero2004}.
-This function can be identified, and the geometry can be isolated.
+This function can be identified, and the related geometry can be isolated.
 As a result, these two information sets can be coupled. 
-The other main assumption for the approach is that if the function of a geometry element is identified, alternative solutions for that function  
+The other main assumption for the approach is that if the function of a geometry element is identified, alternative solutions for that function can be identified and integrated into the product architecture.
+\\
 
-As an example (Figure \ref{fig:decompositionExample}), two functions in an \ac{OGV} are "connect vane to fitting" solved by "glue" and "interface to front centre body" solved by "barrel nuts", such \ac{DS} are associated to geometry elements, as shown in the figure.    
+% base working principle: decomp, inno, embody
+The \textit{\ac{FGE} method} is based on three main phases: \textit{functional decomposition} of the legacy CAD model, an \textit{innovation} stage in the functional domain and an \textit{embodiment} step to realise CAD models for analysis.
+% Since the embodiment of all concepts has shown to be a key obstacle in investigating into multiple concepts, previous research \citep{Muller2020a} has yielded a modular CAD modelling approach that allows for the generation of CAD models of variant designs based on embodiment of only single \ac{DS}.
 
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=.6\textwidth]{figures/ogvInitialDecompGeo.png}
-    \caption{Example of function and design solutions of an OGV, connected to geometry elements.
-    The different geometry elements are colour coded to show their extend.}
-    \label{fig:decompositionExample}
-\end{figure}
-
-To enable the capture of a product's functional architecture, \ac{EF-M} modelling has been selected. 
+% EFM
+To enable the capture of the product's architecture and \ac{DR}, \ac{EF-M} modelling has been selected. 
+The basic modelling elements of \ac{EF-M} are illustrated in Figure \ref{fig:EFM}.
 The reason for this ability of \ac{EF-M} to represent the design space through functions and constraints, capture and represent alternative solutions on any abstraction level and the option for first-level analysis based purely on a function model \cite{Muller2019Aiedam}.
 The function model is created by alternating \ac{FR} and their respective \ac{DS} in a tree like structure \cite{Schachinger2000}.
 Since \ac{EF-M} follows the axiom of independence of Suh's axiomatic design \cite{Suh1990}, each \ac{FR} is -- in one concept -- solved by \textit{only one} \ac{DS}. 
 If there are more \ac{DS} per \ac{FR} modelled, these represent alternatives.
-This is illustrated in \ref{fig:EFM} in the form of "Solution A" and "Solution B".
+This is illustrated in Figure \ref{fig:EFM} in the form of "Solution A" and "Solution B".
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=.6\textwidth]{figures/efmExplanationBright.png}
-    \caption{Enhanced Function-Means modelling elements after \cite{Schachinger2000}.}
+    \includegraphics[width=.6\textwidth]{figures/pdf/efm_basics.pdf}    
+        \caption{Enhanced Function-Means modelling elements after \cite{Schachinger2000}.}
     \label{fig:EFM}
 \end{figure}
 
@@ -290,22 +304,40 @@ Since new \ac{DS} are captured for different functions on individual branches of
 In the presented example in Figure \ref{fig:EFM}, only two concepts can be instantiated, one with each alternative \ac{DS}.
 The \textit{instantiation algorithm} that has been implemented in \ac{FGE} also manages alternatives on arbitrary sub levels of the \ac{EF-M} tree.
 
+This factorial increase of concepts can be easily generated in the function model through the instantiation algorithm.
+However, in the geometrical domain, an automatic generation of the CAD models is necessary to be able to analyse and evaluate all concepts.
+% DA element
+This is realised by the function-based modular geometry approach and assembly algorithm of \ac{FGE}.
+% only need to remodel new DS
+Following this approach, presented and verified in \cite{Muller2021FunctionVariants}, the geometry not for each new concept has to be remodelled, but only for each new DS, which reduces the cost of introducing new product concepts based on a legacy design.
+This modularisation, including a precise interface capture and management through the \ac{FGE} object model, allows for automated generation of the CAD models of all feasible concepts.
+
 % CAD / DA / UDF
-To enable the generation of a CAD model of each design concept, a modularised \ac{DA} approach enables the assembly of individual CAD models based on their EF-M model.
-The approach is presented in \cite{Muller2021FunctionVariants}.
-Each \ac{DS} is coupled with \ac{UDF}, individually configurable CAD modules, which represent the geometry embodying the respective solution.
-Since \ac{UDF} are as a functionality available in most commercial CAD systems, these geometry modules can be generated and edited by CAD engineers with minimal additional training.
-Through the flexibility of \ac{UDF} and the possibility to parameterise them, this enables a fine granular control of the geometry via the \ac{EF-M} model.
+%The modularised \ac{DA} approach enables the assembly of individual CAD models for each concept based on the alternative solutions captured in the \ac{EF-M} model.
+%The approach is presented in detail \cite{Muller2021FunctionVariants}.
+To enable this \ac{DA}, each \ac{DS} is coupled with \ac{UDF}, individually configurable CAD modules, which represent the geometry embodying the respective solution.
+Since \ac{UDF} are available in most commercial CAD systems, these geometry modules can be generated and edited by CAD engineers with minimal additional training.
+Through the flexibility of \ac{UDF} and the possibility to parameterise them, this enables a fine granular control of the geometry via the \ac{EF-M} model \citep{King2017}.
 The interfaces between the \ac{UDF} -- and therefor \ac{DS} -- are captured in the \ac{EF-M} model as \ac{iw} connections.
 An assembly algorithm automatically generates the CAD models of all technically feasible concepts in the \ac{EF-M} model.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\textwidth]{figures/pdf/ogvDecomp.pdf}
+    \caption{Example of function and design solutions of a GV, connected to geometry elements as UDF.
+    The different geometry elements are colour coded to show the extend of the UDF.}
+    \label{fig:decompositionExample}
+\end{figure}
+
+An example of decomposition and the coupling of geometry to function using \ac{FGE} is shown in Figure \ref{fig:decompositionExample}.
+Four of the functions of a \ac{GV} together with their respective \ac{DS} are illustrated in \ac{EF-M} notation.
+The \ac{DS} are linked to the geometry via \ac{UDF} objects, which contain all respective colour-coded geometry together with the parameterisation and interfaces.
 
 %\Jakob{presentation of the approach; EF-M model; CAD coupling; instantiation - more or less a short rundown from CADandA}
 
 % aim of FGE: DSE, holistic, knowledge, CAD models for analysis
 
-% base working principle: decomp, inno, embody
-The \ac{FGE} approach is based on three main phases: functional decomposition of the legacy CAD model, an innovation stage in the functional domain and an embodiment step to realise CAD models for analysis.
-Since the embodiment of all concepts has shown to be a key obstacle in investigating into multiple concepts, previous research \citep{Muller2020a} has yielded a modular CAD modelling approach that allows for the generation of CAD models of variant designs based on embodiment of only single \ac{DS}.
+
 
 
 % The number of possible concepts, and therefore the portion of the explored design space\footnote{
@@ -331,11 +363,7 @@ Since the embodiment of all concepts has shown to be a key obstacle in investiga
 %     altFR &= \text{number of alternative solutions for a function} 
 % \end{align*}    
 
-Since each new \ac{DS} on any point in the function model leads to a factorial increase of concepts, an automatic generation of the CAD models is necessary to be able to analyse and evaluate all concepts.
-% DA element
-This is realised by the function-based modular geometry approach and assembly algorithm of \ac{FGE}.
-Following this approach, presented and verified in \cite{Muller2021FunctionVariants}, the geometry not for each new concept has to be remodelled, but only for each new DS, which reduces the cost of introducing new product concepts based on a legacy design.
-This modularisation, including a precise interface capture and management through the \ac{FGE} object model, allows for automated generation of the CAD models of all feasible concepts.
+
 
 
 
@@ -344,30 +372,26 @@ This modularisation, including a precise interface capture and management throug
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Materials and Methods}\label{sec:method}
 % context @GKN
-This study is conducted in collaboration with a Swedish aerospace manufacturer, and is centered around the design of a new part for turbofan engines, an Outlet Vane Guide (\ac{OGV}).
-The part is located in the bypass of the turbofan engine, positioned just behind the fan, as shown in Figure \ref{fig:ogvInTurbine}.
-The set of all \ac{OGV} has the main function to deswirl the airflow from the main rotor, thereby reducing aerodynamic losses.
-Furthermore, the vane has a structural function in that it connects the shroud of the bypass to the \ac{FCB}, thereby creating a load path for the turbine mass to the pylon.
+This study is conducted in tight collaboration with a Swedish aerospace manufacturer, and is centred around the design of a new part for turbofan engines, an Outlet Vane Guide (\ac{GV}).
+The part is located in the bypass of the turbofan engine, positioned just behind the fan, as shown in Figure \ref{fig:turbine}.
+The set of all \ac{GV} has the main function to deswirl the airflow from the main rotor, thereby reducing aerodynamic losses.
+Furthermore, the vane has a structural function in that it connects the shroud of the bypass to the \revision{engine core,} thereby creating a load path for the turbine mass to the pylon.
 Furthermore, the part has to withstand axial loads from the engine thrust.
 
-The development of \ac{OGV} is commonly subject to high weight reduction goals, which is met by the introduction of new manufacturing and material options.
-The common manufacturing and material choice is a titanium core structure, partly hollow metallic \cite{Sjunnesson2019}.
+For the \ac{GV} being a relatively large component, it is necessary to find low weight designs.
+As a result, low-weigth designs are given high priorities by the design team.
+This can be achieved  by the introduction of new manufacturing and material options.
+The common manufacturing and material choice is a \revision{metallic}  core structure \cite{Sjunnesson2019}.
 Alternative options are composites or combined solutions.
 
-% \begin{figure}[ht]
-%     \centering
-%     \includegraphics[width=0.9\textwidth]{figures/trent9000_OGV.png}
-%     \caption{A Rolls Royce Trent 900 turbine rendered in CAD\protect\footnotemark, with one \ac{FF} \ac{OGV} highlighted in orange. \Jakob{add a render of an OGV as a figure b}}
-%     \label{fig:my_label}
-% \end{figure}
 
-% figure of trent900, OGV
+% figure of trent900, GV
 \begin{figure}[th!]
     \begin{center}
     \centering
-        \includegraphics[width=\textwidth]{figures/trent9000_OGV.png}
+        \includegraphics[width=.8\textwidth]{figures/trent9000_OGV.png}
 
-        \caption{(A Rolls Royce Trent 900 turbine rendered in CAD\protect\footnotemark, with one OGV highlighted in orange.
+        \caption{A Rolls Royce Trent 900 engine rendered in CAD\protect\footnotemark, with one GV highlighted in orange.
         }
         \label{fig:turbine}
     \end{center}
@@ -376,40 +400,48 @@ Alternative options are composites or combined solutions.
 \footnotetext{CAD model by Chris Shakal on grabcad.com}
 %\Jakob{present an illustration of the simple sample vane, geometry and EF-M}
 
-An \ac{OGV} commonly consists of a vane structure, a predominantly aerodynamically defined structure, and two fittings which fasten the vane to a hub on the inside, and the outer fan case on the outside, as can be seen in \ref{fig:turbine}.
-Both parts provide interfaces the \ac{OGV} assembly has to comply to.
+a \ac{GV} commonly consists of a vane structure, a predominantly aerodynamically defined structure, and two \revision{end atachments} which fasten the vane to \revision{the engine core} on the inside, and the outer fan case on the outside, as can be seen in Figure \ref{fig:turbine} and Figure \ref{fig:decompositionExample}.
+Both parts provide interfaces the \ac{GV} assembly has to comply to.
 
-In the company, the part is currently under redesign and development by a multidisciplinary team of more than ten engineers.
-These engineers partake in the development in defined percentage of their work-time, between 10\% and 70\%. It is important to mention that the company is since the late 90s heavily investing on the development of KBE techniques for design space exploration, based on state-of-the art CAD parametric modelling approaches. This means that the engineers possess a benchmark system for comparison with the FGE. This allowed to highlight potential benefits and implementation issues.    
+In the case company, the part is currently under redesign and development by a multidisciplinary team of more than ten engineers.
+The development team is composed of both design and analysis engineers with experience in aerospace engineering ranging from five to thirty years.
+These engineers partake in the development in defined percentage of their work-time, between 10\% and 70\%. 
+\\
 
-% action research framework
-The project is performed in an action research approach, where the researchers accompany the development process investigating into new opportunities for a fan frame \ac{OGV} \citep{Yin2006}.
-The researchers participate in certain regular team meetings of the development team, and have the ability to observe the engineers during their work.
-Notes from these meetings and observations are part of the data supporting the presented results.
+It is important to mention that the company is using and developing  \ac{KBE} techniques with a high degree of \ac{DA} for design space exploration.
+This means that the engineers possess a benchmark system for comparison with the FGE. 
+The benchmark system can be compared in make-up and extend to the parameterisation-based \ac{MDA} framework presented in \cite{Sandberg2017ADesign}.
+
 
 \subsection{Study setup}
-Beyond the observation throughout the regular development approach, a set of studies has been setup to investigate the perception of the presented method.
-The majority of data collection was performed in two workshops.
+% action research framework
+The research has been performed as a participatory action research study, where the researchers accompany the development process investigating into new opportunities for a fan frame \ac{GV} \citep{Yin2006}.
+The researchers participate in certain regular team meetings together with the design team, and have the ability to observe the engineers during their work.
+Notes from these meetings and observations are part of the data supporting the presented results.
 
+
+Beyond the observation throughout the product development project, a set of studies has been conducted to investigate the perception of the presented method.
+For the specific  purpose of validating the FGE method and tool, two consecutive workshops were organised together with the design team. 
 % initial interviews???
 
 % workshop 1 and decomposition
-In a first workshop together with the \ac{OGV} development team (eight participants), a functional decomposition of the part was performed and captured.
+In a first workshop together with the \ac{GV} development team (eight participants), a functional decomposition of the part was performed and captured.
+For the purpose of the workshop, a made up  generic design of a GV was defined with sufficient degree of realism to enable a real dialogue, but with company specific features left out to protect the \ac{IP} of the company.
 Hence, this workshop is referred to as the "decomposition workshop".
 The actual workshop was predated with a one hour long test-workshop in one of the regular team meetings to evaluate the motivation of the practitioners and the requirements for the actual workshop.
 The results of this "test-workshop" are included in the results of the decomposition workshop.
-The decomposition was performed using large-scale print-outs of drawings an \ac{OGV} which were annotated in a group exercise.
+The decomposition was performed using large-scale print-outs of drawings a \ac{GV} which were annotated in a group exercise.
 The annotated drawings were collected, digitised and used for the creation of function-geometry model in \ac{FGE} for the legacy design.
 %After the decomposition activity, the practitioners were asked to fill out a questionnaire about their perception of the workshop.
 %The workshop was concluded with an open feedback round.
 
 %workshop 2
 A second workshop (eight participants) covered the innovation stage of the \ac{FGE} approach. 
-The workshop was done with the same development team, using the same product.%, although due to scheduling challenges the participant groups in workshop one and two were not exactly identical, but each engaged 80\% of members the development team.
+The workshop was held with the same development team, using the same product.%, although due to scheduling challenges the participant groups in workshop one and two were not exactly identical, but each engaged 80\% of members the development team.
 
 % prototype tool
-For the second, online\footnote{The workshop was performed online due to the social distancing regulations caused by the COVID-19 pandemic.}, workshop a prototype tool of the \ac{FGE} approach was created.
-The tool works server-based with a web interfaces, allowing users with different skill levels and operating systems to connect to the same database.
+For the second, online\footnote{The workshop was performed online due to the social distancing regulations caused by the COVID-19 pandemic.}, workshop, a proof-of-concept tool of the \ac{FGE} approach was created.
+The tool works server-based with a web interface (illustrated in Figure \ref{fig:omfgDSEinterface}), allowing users with different skill levels and operating systems to connect to the same database.
 The tool incorporates a fully functional implementation of an \ac{EF-M} modeller with additional functionality to capture geometric information for each \ac{DS}.
 As such, it is able to capture alternative design solutions and instantiate them into different concepts.
 Furthermore did the tool include a geometrical modelling aspect to automatically generate \ac{CAD} models of each concept, based on previous geometrical modularisation in Siemens NX.
@@ -422,9 +454,10 @@ The results of the online workshop were captured through audio and video recordi
 
 %The findings from the workshop were verified through semi-structured in-depth interviews with selected participants of the workshop. \Jakob{these are still outstanding - hopefully after summer!} 
 
-Since the product being in development at the case company, it underlies certain \ac{IP} and export restrictions. 
-Therefore, in this publication, a simplified model is used for presentation purposes in order to protect the case company's and their customers' \ac{IP}.
-However, the simplified \ac{OGV} model has been verified with the practitioners in order to be able to convey the main functions and solutions of a generic \ac{OGV}.
+Since the product is currently being in development at the case company, it underlies certain \ac{IP} and export restrictions. 
+Therefore, a simplified model is used for presentation purposes in this publication in order to protect the case company's and their customers' \ac{IP}.
+% 
+%However, the simplified \ac{GV} model has been verified with the practitioners in order to be able to convey the main functions and solutions of a generic \ac{GV}.
 
 
 
@@ -433,35 +466,31 @@ However, the simplified \ac{OGV} model has been verified with the practitioners 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results}\label{sec:results}
 
-% interface for study, simple vane sample
-To facilitate the interaction with the industrial practitioners, the \ac{FGE} approach has been developed into a proof-of-concept tool. The tool has been developed as a server-based application with a web-interface. 
-The web-interface is presented in Figure \ref{fig:omfgDSEinterface} and shows a simplified EF-M tree of an \ac{OGV}. 
-Using this simplified \ac{OGV} model, the practitioners were introduced to the \ac{EF-M} modelling using the \ac{FGE} tool, and given a presentation of the \ac{DA} component of \ac{FGE}.
 
-The next sections describe how the design space exploration of the OGV has been conducted with the industrial practitioners with the support of FGE. 
+The next sections describe how the design space exploration of the GV has been conducted with the industrial practitioners with the support of FGE. 
 Also, it will describe the practitioners' feedback and reflections after the use of the method.
 %The respective CAD models of the demo-geometry are shown in \ref{fig:}.
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.8\textwidth]{figures/omfgDSEinterface.png}
-    \caption{Web-based interface of the FGE tool "omfgDSE" (object model for function and geometry based design space exploration) , showing a simplified EF-M model of an OGV.
-    The right-hand box illustrates the details of a DS, such as associated geometry and parameters.}
+    \includegraphics[width=\textwidth]{figures/pdf/interface.pdf}
+    \caption{Web-based interface of the FGE tool "omfgDSE" (object model for function and geometry based design space exploration) , showing a simplified EF-M model of a GV.
+    The right-hand pane illustrates the design rationale of the selected DS, such as associated function, geometry and parameters.}
     \label{fig:omfgDSEinterface}
 \end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Design space exploration using FGE}
-The \ac{DSE} approach is separated into three phases \textit{decomposition}, \textit{Innovation} and \textit{embodiment}, following \cite{Muller2019Aiedam}.
-The presented workshop focuses on the interactions with practitioners in the phases decomposition and embodiment.
+The \ac{DSE} approach is separated into three phases \textit{decomposition}, \textit{innovation} and \textit{embodiment}, following \cite{Muller2019Aiedam}.
+The presented workshop focuses on the interactions with practitioners in the phases decomposition and innovation.
 
 % Decomposition
 %\subsubsection{First workshop - Decomposition}
 
-In the\textit{ first workshop (decomposition)}, the legacy design of the \ac{OGV} was decomposed into a \ac{EF-M} model.
-The model contained three main functions, and 18 different design solutions on the concrete (lowest) level.
+In the first workshop \textit{(decomposition)}, the legacy design of the \ac{GV} was captured in an \ac{EF-M} model based on the available geometry.
+The model contains three main functions, and 18 different design solutions on the concrete (lowest) level.
 Since the model was created through decomposition, all \ac{DS} were directly linked to one or several geometry elements.
-A modularised CAD model was created based on the original geometry, but modularised according to the decomposition.
+A modularised CAD model was created based on the original geometry, modularised according to the decomposition.
 % introduce here the new figure
 
 % \begin{figure}[ht]
@@ -471,58 +500,70 @@ A modularised CAD model was created based on the original geometry, but modulari
 %     \label{modularizedCAD}
 % \end{figure}
 
-Figure \ref{fig:decompositionExample} shows this connection for four distinct DSs.
-For example, the leading edge of the decomposed \ac{OGV} is covered by a steel edge.
-This steel edge, as a geometrical element, has been associated with the function "Withstand impacts" through the solution "Steel edge".
-The respective geometry, the part of the steel edge and the cutout in the vane shape to place it, are captured in a UDF which are then associated with the DS.
+Figure \ref{fig:decompositionExample} shows this modularisation and connection for four individual \acp{DS} and their related \acp{UDF}.
+For example, the leading edge of the decomposed \ac{GV} is covered by a \revision{metallic} edge.
+This \revision{metallic}  edge, as a geometrical element, has been associated with the function "Withstand impacts" through the solution "\revision{Metallic}  edge".
+The respective geometry, of both the \revision{metallic}  edge and the cutout in the vane to place it in, are captured in two \acp{UDF} which are then associated with the \ac{DS}.
+
 
 %Other examples of geometry elements connected to DSs are "H-section foot" and "Bottom Foot Interface". 
 This decomposition served as input for the following workshop, focused on innovation. 
+\\
+
 
 % introduce here a connecting sentence witht he next 
 % new solutions
 %\subsubsection{Second workshop - Innovation}
 
-In the \textit{second workshop (innovation)} used the prototype tool to capture the novel design solutions.
-In this process, the product model was extended by five new sub-functions that had been omitted in the previous workshop.
-n this workshop, innovation was made first at the functional level - with the introduction of five new sub-functions for the OGV. For example,  sub-functions related to acoustic performances were added to the model. 
-In the workshop, the practitioners found ten novel alternative  design solutions over the legacy design.
-Their nature ranged from material alternatives over different interface approaches to variations in shape and dimensions of the existing solutions.
-The entire EF-M tree, with all novel FR and DS highlighted with red borders, is shown in Figure \ref{fig:fullEFM}.
-%Exemplary for the different new solution, one set of alternative DS is presented here in both the functional and geometrical domain, as well as the respective elements of the \ac{OMFG} linking those two domains.
+In the second workshop \textit{(innovation)} the prototype tool was used to capture novel design solutions.
+As a result, the product model was extended by five new sub-functions with their respective solutions and 10 new alternative \ac{DS}.
+As an example for new FR, sub-functions related to acoustic performance were added to the model. 
+%In the workshop, the practitioners found ten novel alternative  design solutions over the legacy design.
+The nature of the \ac{DS} ranged from material alternatives over different interface approaches to variations in shape and dimensions of the existing solutions.
+The entire EF-M tree, with all new FR and DS highlighted with red borders, is shown in Figure \ref{fig:fullEFM}.
+Based on the new alternative DS, 52 different concepts could be instantiated.
 
-
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=\textwidth]{figures/fullEFM.png}
-    \caption{Complete EF-M model after the innovation workshop.
-    All new DS and FR are highlighted with a red border.
-    Readability has been dismissed on purpose to protect company IP.}
-    \label{fig:fullEFM}
-\end{figure}
 
 % new solutions example
 The majority of the novel solutions shows a conceptual difference from the legacy design.
-As an example, the \ac{FR} "Join vane to fitting" is in the legacy design solved by the \ac{DS} "Adhesive connection", meaning that the vane is glued to the fitting using resin.
+As an example, the \ac{FR} "Join vane to \revision{attachment"} is in the legacy design solved by the \ac{DS} "Adhesive connection", meaning that the vane is glued to the \revision{attachment} using resin.
+This DS, and the respective UDF, are illustrated in Figure \ref{fig:decompositionExample}.
 The two alternative \ac{DS}, as results from the workshop, were "Bolted joint" and "Fully integrated solution".
+The respective captured DS are shown in Figure \ref{fig:efmAltFoot}, whereas the geometry related to these DS is shown in the context of the full GV in Figure \ref{fig:altGV}.
 
 %subsubsection{Embodiment}
-
 % maybe we should not bring this:
 The \textit{embodiment} phase of the \ac{FGE} approach has not been performed in its entirety, since the \ac{DA} section of the proof-of-concept tool has not sufficiently matured to handle the complex geometries of the solutions devised in the innovation workshop. For a verification of the proof-of-concept tool on another turbine structure, see \citep{Muller2021FunctionVariants}.
 
 % alternative:
-Based on the different alternative solutions and functions captured in the innovation workshop, 52 different concepts were instantiated.
-The respective solutions were embodied and combined.
+% Based on the different alternative solutions and functions captured in the innovation workshop, 52 different concepts were instantiated.
+% The respective solutions were embodied and combined.
 
-Figure \ref{fig:altOGV} shows an exemplary embodiment of three concepts with alternative DS for the FR "Join vane to fitting" shown in Figure \ref{fig:efmAltFoot}.
+Figure \ref{fig:altGV} shows an exemplary embodiment of three concepts with alternative DS for the FR "Join vane to \revision{attachment}" shown in Figure \ref{fig:efmAltFoot}.
 While otherwise using the same configuration, each of the geometries is adapted to accommodate the respective geometric changes in the concept.
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=\textwidth]{figures/efmHighlightFoot.png}
-    \caption{Detail of EF-M tree after innovation workshop: alternative solutions for DS "Join vane to fitting".}
-    \label{fig:efmAltFoot}
+    
+        \begin{subfigure}[b]{0.6\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{figures/pdf/fullEFM.pdf}
+            \caption{}
+            \label{fig:fullEFM}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.35\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{figures/pdf/efmDetail.pdf}
+            \caption{}
+            \label{fig:efmAltFoot}
+        \end{subfigure}
+        
+    \caption{EF-M model after the innovation workshop.
+    (a) Full EF-M tree, with all new DS and FR highlighted with a red border.
+     Readability has been dismissed on purpose to protect company IP.
+    (b) Detail: alternative solutions for DS "Join vane to \revision{attachment"}, highlighted in blue in (a).}
+    \label{fig:efmResults}
 \end{figure}
 
 
@@ -531,27 +572,30 @@ While otherwise using the same configuration, each of the geometries is adapted 
     \centering
         \begin{subfigure}[b]{0.3\textwidth}
             \centering
-            \includegraphics[width=\textwidth]{figures/footGluedCad.png}
+            \includegraphics[width=\textwidth]{figures/footGluedGKN.png}
             \caption{}
-            \label{fig:turbofan}
+            \label{fig:footGlued}
         \end{subfigure}
         \hfill
         \begin{subfigure}[b]{0.3\textwidth}
             \centering
-            \includegraphics[width=\textwidth]{figures/footBoltedCad.png}
+            \includegraphics[width=\textwidth]{figures/footBoltedGKN.png}
             \caption{}
-            \label{fig:ogvRender}
+            \label{fig:footBolted}
         \end{subfigure}
         \hfill
         \begin{subfigure}[b]{0.3\textwidth}
             \centering
-            \includegraphics[width=\textwidth]{figures/footOnePiceCad.png}
+            \includegraphics[width=\textwidth]{figures/footOnePiceGKN.png}
             \caption{}
-            \label{fig:ogvRender}
+            \label{fig:footOnepice}
         \end{subfigure}
-        \caption{Embodiment of three concepts, differentiating in the solutions for the FR "Join vane to fitting", from left: (a) "Adhesive connection", (b) "Bolted joint" and (c) "Fully integrated solution".
+        \caption{Embodiment of three concepts, differentiating in the solutions for the FR "Join vane to \revision{attachment"}, from left: (a) "Adhesive connection", (b) "Bolted joint" and (c) "Fully integrated solution".
         Respective alternative geometric elements relating to the respective UDF are highlighted in colour.}
-        \label{fig:altOGV}
+        
+        % \caption{Embodiment of three concepts, differentiating in the solutions for the FR "Join vane to fitting", from left: (a) "Adhesive connection", (b) "Bolted joint" and (c) "Fully integrated solution".
+        % Respective alternative geometric elements relating to the respective UDF are highlighted in colour.}
+        \label{fig:altGV}
     \end{center}
 \end{figure}
 
@@ -580,46 +624,56 @@ The following section reports on the practitioners' feedback and reflections aft
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Reflections form industrial practitioners regarding the application of the method} \label{sec:feedback}
 
-The general feedback from the industrial practitioners has been positive, with practitioners stating that the approach fit well into the development project -- albeit maybe too late -- and they would like to do similar workshops again on other products.
+The practitioners have stated that the workshops -- as additional design activities additionally to their regular design activitires -- fit well into the development project.
+%albeit it was maybe too late in the development process.
+Furthermore, all workshop participants would like to repeat the workshop concept, both in the same, but even more so in other projects.
 The following sections will go through the main mechanisms that have been highlighted by the industrial practitioners, in particular the ability of the approach to:
 
 \begin{enumerate}
-	\item Provide a clear and explicit illustration of the design rationale of the product. 
-	\item Capture, integrate and model novel solutions.
-	\item Provide a clear connection between the abstract functional and the concrete geometrical domain, which has the potential to foster innovation.
+	%\item Provide a clear and explicit illustration of the design rationale of the product. 
+	\item Represent and capture design rationale and the design space
+	\item Capture, integrate and model novel solutions
+	%\item Provide a clear connection between the abstract functional and the concrete geometrical domain, which has the potential to foster innovation.
+	\item Provide support for the embodiment of novel concepts that would otherwise remain unexplored
 \end{enumerate}
 
-\subsubsection{Ability to provide a clear and explicit illustration of the design rationale of the product }
+\subsubsection{Capture and representation of design rationale and design space}
 
 \begin{center}
-    “I learned a lot of things about the OGV just by reading the graph” 
+    “I learned a lot of things about the GV just by reading the graph” 
 \end{center}
 \begin{flushright}
     -aerodynamics analysis engineer
 \end{flushright}
 
 
-This quote is representative of a common problem during the design of aerospace products. As components are designed and conceptualised over long times, and by a different people, it is difficult to retain the design rationale of a product (for example why the product looks the way it does). This problem has been identified in other sectors as well \citep{Bracewell2009}. 
-For practitioners, the FGE approach supported the ability to clearly visualise the rationale in both the geometrical domain, visualising "what is", and the functional domain, "why it is".
+This quote illustrates a common problem during the design of aerospace products.
+As components are designed and conceptualised over long times, and by a different people, it is difficult to retain the \acf{DR} of a product (that is, why a product has been designed in this form) \citep{Bracewell2009}. 
+This \ac{DR} is especially hard to read in highly integrated and complex products such as aerospace engine components, where a single geometrical artefact may fulfil multiple functions in different domains \cite{Raja2019}.
+For practitioners, the FGE approach supports the ability to visualise the rationale in both the geometrical domain, visualising "what is", and the functional domain, "why it is".
 
-It appeared to be most important to some practitioners that they improved their knowledge about the product and participated in a forum that permitted exchange about the product's functions and solutions.
-The questionnaire accompanying the workshop revealed that no team member had full confidence about the \ac{OGV}, but the confidence in the team's knowledge was higher (2.9 out of 5 for individuals vs 3.7 out of 5 for the team).
+In terms of the use of \ac{FGE}, it appears to be most important to some practitioners that they improved their knowledge about the product and participated in a forum that permitted exchange about the product's functions and solutions.
+The questionnaire accompanying the workshop revealed that no team member had full confidence about the \ac{GV}, but most rated their understanding of the GV higher after the workshop than before.
+The workshop also fostered the awareness of \textit{meta-product-knowledge}, since many engineers were not even aware \textit{who} knew the rationale behind a specific element.
+Only through discussions and participation of engineers of multiple disciplines could the entire DR be captured in the EF-M model.
 
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=\textwidth]{figures/validationDetails.png}
-    \caption{Excerpt of the FGE interface that shows the design rationale of a geometry element. The parent FR is associated to the corresponding DS and geometry element}
-    \label{fig:interface}
-\end{figure}
 
-As an example for how \ac{FGE} enables the acces to \ac{DR} is the interface of the tool used in the study, which collects all information of a solution in a single place.
-Figure \ref{fig:interface} shows on the right hand side how the geometry, parameterisation and other information about a solution is collected in a single window pane.
+An example for how \ac{FGE} enables access to \ac{DR} is the interface of the tool used in the study, which collects all information of a solution in a single place.
+Figure \ref{fig:omfgDSEinterface} shows on the right hand side how the geometry, parameterisation and other information about a solution is collected in a single window pane.
 The top of the pane shows which function is solved, and the highlighting of the solution shows its position in the product architecture.
 
 Furthermore, the approach can illustrate the geometrical interfaces between solutions through \ac{iw} connectors in the \ac{EF-M} model.
-This are seen as black arcs in the interface of Figure \ref{fig:interface}, left hand side, as well as Figure \ref{fig:omfgDSEinterface}.
+This are seen as black arcs in the interface of Figure \ref{fig:omfgDSEinterface}, left hand side.
 
-Proofing this, most practitioners stated a higher knowledge of the product after the workshop than before.
+This approach of information representation was referred to as "comprehensive" by the practitioners.
+
+% tree / alt solutions in EF-M
+Beyond the information about individual solutions, the \ac{FGE} interface provides an overview over the possible alternatives through \ac{EF-M}.
+This was perceived to be an efficient way to represent the design space, providing "good possibilities to look at different solutions".
+However, it was also noted by one participant in the workshop that the function models can quickly grow to be too complex.
+The function model created in this study (see Figure \ref{fig:fullEFM}) was considered "almost too large".
+
+%Proofing this, most practitioners stated a higher knowledge of the product after the workshop than before.
 
 
 
@@ -633,77 +687,98 @@ Proofing this, most practitioners stated a higher knowledge of the product after
 \subsubsection{Ability to capture, integrate and model novel solutions. }
 
 \begin{center}
-    “Parametric solutions exist, where dimensions can be changed, limited to parameters that we change, dimensions or angles or that – but we cannot iterate over different design solutions, where it’s bigger changes” 
+    “Parametric solutions exist, [...], limited to parameters that we change, dimensions or angles or that, but we cannot iterate over different design solutions, where it’s bigger changes” 
 \end{center}
 \begin{flushright}
     -- development team leader
 \end{flushright}
 
-\begin{center}
-    “Right now our system for DSE is limited to changing parameters (dimensions, angles…) and does not iterate over different Design solutions” 
-\end{center}
-\begin{flushright}
-    -- analysis/meshing specialist
-\end{flushright}
+% \begin{center}
+%     “Right now our system for DSE is limited to changing parameters (dimensions, angles…) and does not iterate over different Design solutions” 
+% \end{center}
+% \begin{flushright}
+%     -- analysis/meshing specialist
+% \end{flushright}
 
-\begin{center}
-    “There are still gaps within early concept phase – this is one possibility to generate, and evaluate, lots of concepts, get trend curves and so on” 
-\end{center}
-\begin{flushright}
-    -- design engineer
-\end{flushright}
-These three quotes represent instances of the practitioners' reflections over the in-house \ac{KBE} system for DSE adopted by the company, and built around state of the art KBE approaches.
-while recognising the power of these techniques, they recognise that while the exploration of dimensional variations is well supported, the exploration of concepts which differ from the legacy design in \textit{topology} is limited.
+This quotes stands for the practitioners' reflections over the in-house \ac{KBE} system for DSE adopted by the company, which is built around state of the art KBE approaches.
+However, the practitioners are well aware about the limitations of highly automated CAD approaches in representing conceptually different design solutions.
+While the exploration of dimensional variety is possible and appreciated by the practitioners, the explicit need to realise topologically different options has been stated.
+This matches with observations from literature, where it is stated that "a parametric model offers little flexibility" \cite{Li2020UsingIntegration}.
 
 According to the practitioners, FGE has the potential to deliver this through the modularisation of the geometry, and the connection to the \ac{DR} of the product.
-
 
 % more solutions
 It was perceived by the participants of the workshop that the use of the \ac{FGE} approach supports the introduction of new solutions ($4$ on a scale of $1$ "no support for new solutions" to $5$ "totally supports").
 % novel solutions
 It was furthermore stated that a part of the identified \ac{DS} would probably not have been found -- or considered -- in a regular modelling approach, with a majority ($71\%$) stating "maybe some, but not all".
-The other participants stated either "none of them" or "most of them" without \ac{FGE}.
+The other participants stated either "none of them" or "most of them" would have been identified without \ac{FGE}.
 
 % more functions 
 Beyond only exploring new solutions for existing functions, \ac{FGE} also enables the capture of newly identified functions or sub-functions.
-Practitioners feedback supports this, although the ability to integrate new solutions is perceived to be better than that of new functions.
+The workshop results showed that through five new functions being identified during the innovation workshop.
+Practitioners feedback further supported this, although the ability to integrate new solutions is perceived to be more important than that of new functions.
 
 To summarise this, the practitioners perceive FGE as a viable method to capture novel solutions and functions.
-It has been interpreted that FGE does so better than the parametric DSE approach in use at the company.
+Having a formal, and even computer  supported, modelling approach at hand when generating conceptual alternatives directly in creative design meetings was found very applicable. 
+
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsubsection{Ability provide a clear connection between the abstract functional and the concrete geometrical domain }
+\subsubsection{Support for the embodiment of novel concepts}
+
+
+% \begin{center}
+%     “What we are looking for is how to get an efficient concept generation phase before we go into our parametric system [\textit{author's note: the in-house systems for DSE}]  –- so that we get an overview over potential concepts” 
+% \end{center}
+% \begin{flushright}
+%     -- development team leader
+% \end{flushright}
 
 
 \begin{center}
-    “what we are looking for is how to get an efficient concept generation phase before we go into our parametric system [\textit{author's note: the in-house systems for DSE}]  –- so that we get an overview over potential concepts ” 
+    “There are still gaps within early concept phase – this is one possibility to generate, and evaluate, lots of concepts, get trend curves and so on.” 
 \end{center}
 \begin{flushright}
-    -- development team leader
+    -- design engineer
 \end{flushright}
-
-
 
 % Especially in aerospace components, due to strict constraints on weight and high requirements on performance, the products turn out to be highly integrated \citep{Raja2019}.
 % As a result, only few team members have an overview over the \ac{DR} of the product. 
 % This has also been observed in the workshops.
 % Only one team member was relatively confident in their knowledge about the part, whereas the others had only segmented knowledge and judged their knowledge with an average of 2.7 out of five.
 
+% FGE good
+As has been stated in the section above, there is a substantial need for a \ac{DSE} modelling approach to capture topologically different \ac{DS}.
+The practitioners agree that \ac{FGE} is an approach which can support such exploration.
+
+% CAD needed
+However, the sole representation of alternative concepts in function models would be insufficient.
+To enable the necessary analyses, geometry models in the form of CAD are required.
+
+% required CAD qualities
+The practitioners stated that the CAD models needed for effective \ac{DSE} need to be of sufficient quality to be meshed automatically.
+This requires certain quality criteria such as surface continuity.
+Furthermore would the CAD models require automated "tagging" of relevant geometry elements for analyses, for example where forces attack or constraints apply.
+
+
+% possible with FGE
+After a demonstration of the assembly algorithm of FGE and the geometry modularisation, the practitioners agreed that such an approach can deliver the required models.
+Therefore, the ability to generate \textit{topologically different} variant concepts was seen as a benefit of the presented method.
+
 %identified areas for improvement through decomposition as well as identified "do not touch"
-Almost all participants stated that through the decomposition workshop, "do not touch" areas as well as areas for improvement on the product could be identified.
-This provides a clearer representation of the design space for the engineers: 
-through the mapping of geometry to function, the "do not touch" areas become tangible in \textit{why} they shouldn't be altered, and furthermore what impact this has on the rest of the product architecture, with a participant representatively stating it was interesting to see "how it is connected"
-This is a major strength of the direct coupling of the function to the geometry model:
-Other modelling approaches do not represent how a requirement or constraint does impact the geometry.
-The motivation \textit{why} an area cannot be subject to altering is stored in the \textit{rationale} -- through the connection a geometrical element it becomes tangible,
+% Almost all participants stated that through the decomposition workshop, "do not touch" areas as well as areas for improvement on the product could be identified.
+% This provides a clearer representation of the design space for the engineers: 
+% through the mapping of geometry to function, the "do not touch" areas become tangible in \textit{why} they shouldn't be altered, and furthermore what impact this has on the rest of the product architecture, with a participant representatively stating it was interesting to see "how it is connected"
+% This is a major strength of the direct coupling of the function to the geometry model:
+% Other modelling approaches do not represent how a requirement or constraint does impact the geometry.
+% The motivation \textit{why} an area cannot be subject to altering is stored in the \textit{rationale} -- through the connection a geometrical element it becomes tangible,
 
 
-However, the need for discussion of these findings in follow-up meetings was also highlighted by most of the participants.
-This result is corroborated by the results of the questionnaire from the innovation workshop.
+% However, the need for discussion of these findings in follow-up meetings was also highlighted by most of the participants.
+% This result is corroborated by the results of the questionnaire from the innovation workshop.
 
 
 % \begin{figure}[ht]
@@ -713,44 +788,53 @@ This result is corroborated by the results of the questionnaire from the innovat
 %     \label{fig:resultsInnov}
 % \end{figure}
 
-As a major benefit of the approach was recognised the ability to generate \textit{topologically different} variant concepts.
 
 \begin{center}
-    “generation of CAD models based on different configurations would be a key functionality” 
+    “generation of CAD models based on different configurations is a key functionality” 
 \end{center}
 \begin{flushright}
     -- development team leader
 \end{flushright}
 
-On this regard, the \ac{FGE} framework has been evaluated as beneficial, especially if connected and integrated with the in-house systems for DSE, which supports an automated \ac{MDA} approach.
-The reason for this is that the analysis phases needs to rely on reliable meshing techniques, which are already supported by the in-house system for DSE.
-In this context, FGE is seen as a method to be used \textit{before} the in-house parameterisation and analysis tool.
-The integration with other systems to be used for detailed analysis is considered as an important aspect.
-However, the main benefit of FGE is on the ability t\textit{o generate and integrate more radical design concepts in the early phases}, from which a preliminary design analysis (even only based on expert opininon) can be conducted upon. 
+
+
+
+% On this regard, the \ac{FGE} framework has been evaluated as beneficial, especially if connected and integrated with the in-house systems for DSE, which supports an automated \ac{MDA} approach.
+% The reason for this is that the analysis phases needs to rely on reliable meshing techniques, which are already supported by the in-house system for DSE.
+% In this context, FGE is seen as a method to be used \textit{before} the in-house parameterisation and analysis tool.
+% The integration with other systems to be used for detailed analysis is considered as an important aspect.
+% However, the main benefit of FGE is on the ability t\textit{o generate and integrate more radical design concepts in the early phases}, from which a preliminary design analysis (even only based on expert opininon) can be conducted upon. 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Implementation issues }
 
-Despite the interest on the approach the practitioners pointed out to some implementation issues, which are subject to future work.
+Despite the interest on the approach, the practitioners pointed out certain implementation issues.
 
-Hence, experience with function modelling and/or web-based applications may play a role in how difficult the tool use was perceived.
 
 As a feedback of the modelling process using \ac{EF-M} to capture and represent alternative solutions, a practitioner mentioned that the re-use of existing solution's geometry is hardly possible to model.
-If, for example, the \ac{FR} "Electric grounding of vane" uses the galvanic properties of the metallic leading-edge, this relation cannot be represented in \ac{EF-M}.
-A workaround for this is to phrase the respective \ac{DS} "Use grounding vane" and model an \ac{iw} connection between them.
+%If, for example, the \ac{FR} "Electric grounding of vane" uses the galvanic properties of the metallic leading-edge, this relation can hardly be represented in \ac{EF-M}.
+Although there exist horizontal relations in EF-M modelling, they increase the modelling complexity and reduce readability.
+%A workaround for this is to phrase the respective \ac{DS} "Use grounding vane" and model an \ac{iw} connection between them.
 %However, the second \ac{DS} would always have to act as a 'slave' in respect to the first \ac{DS} from which it "borrows" product properties. 
-However, such complex relationship modelling has not been implemented yet in the prototype tool, and does not contribute to alleviate the challenges of complexity in function modelling stated by \cite{Muller2020, Tomiyama2013}.
+Therefore, such complex relationship modelling has not been implemented yet in the prototype tool, and does not contribute to alleviate the challenges of complexity in function modelling stated by \cite{Muller2020, Tomiyama2013}.
 
 The ratio of complexity between the functional domain and geometrical domain was point for critique.
 It was stated that a large function model (such as the one in the workshop became through the innovation) reduces the overview over the model.
 It was suggested to use less FR/DR elements and more, but potentially more complex, geometric modules.
+However, the experience with function modelling and/or web-based applications may play a role in how difficult the tool use was perceived.
 
+% redo for: need to couple FGE and EWB
+While FGE supports the exploration of technically, functionally and topologically different solutions, the in-house KBE solution is optimised for parametric variation.
+Being used to the already existing MDA method at the company, the practitioners rather viewed an implementation of FGE as a complement, preferably integrated with the existing system. 
+% The attractive means of FGE, to explore the design space more flexibly, would be attractive to combine with highly automated and generative capabiliites already existing for variations of conceps. 
+%Furthermore is the in-house KBE solution already set up with an automated \ac{MDA} tool-chain, which enables automated behaviour analysis.
+% The practitioners have stated that a combination of both systems, with the in-house solution building onto the output of \ac{FGE}, would be the desired option for efficient \ac{DSE}.
 % meshing
-While the automated generation of CAD models was very much welcomed, it was enhanced that this is only beneficial for the product development process if the models are of sufficient quality for downstream processes.
-Several participants stated the need for continuous model surfaces to be able to apply automated meshing routines.
-Furthermore was the need for markup in terms of analysis-relevant geometry elements (such as loaded or fixed surfaces) highlighted.
+% While the automated generation of CAD models was very much welcomed, it was enhanced that this is only beneficial for the product development process if the models are of sufficient quality for downstream processes.
+% Several participants stated the need for continuous model surfaces to be able to apply automated meshing routines.
+% Furthermore was the need for markup in terms of analysis-relevant geometry elements (such as loaded or fixed surfaces) highlighted.
 
 
 
@@ -758,125 +842,17 @@ Furthermore was the need for markup in terms of analysis-relevant geometry eleme
 
 % I have commented out the whole section 3.2. just for makign easy the new editing 
 
-\begin{comment}
-
-\begin{center}
-    “I enjoyed it; seemed fun; learned a lot of things just by reading the graph” 
-\end{center}
-\begin{flushright}
-    -participating aerodynamics analysis engineer about the innovation workshop
-\end{flushright}
-
-The method has been received by the practitioners with a positive attitude.
-While the method, partially through the development level of the tool, and the associated learning curve have been a challenge for the engineers, the feedback remains throughout positive and constructive.
-Beyond that, the option for knowledge capture has been welcomed, together with the exchange between engineers of multiple disciplines which has been encouraged by the workshops.
-
-% decomposition more value than innovation?
-In general, it appears that practitioners perceived the decomposition workshop as more value adding to their development work than the innovation workshop.
-In an initial assessment, this is due to the added challenge of the \ac{FGE} tool in the second workshop, whereas the first workshop was performed with familiar tools (printed drawings, adhesive notes, whiteboards).
-However, one participant stated that the prototype was "a very comprehensive tool".
-Hence, experience with function modelling and/or web-based applications may play a role in how difficult the tool use was perceived.
-An indicator for this is the relatively low value of self-assessed understanding of the \ac{FGE} approach, 
-
-%% "need it"
-However, looking beyond the tool challenges, the agreement among the participants was that "this is one possibility to generate, and evaluate, lots of concepts" and product developers "definitely need a tool for that".
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-\subsubsection{Decomposition}
-The decomposition workshop received mainly positive feedback.
-% "knowledge capture"; slight knowledge increase through workshop with single participants, but 
-It appeared to be most important to some practitioners that they improved their knowledge about the product and participated in a forum that permitted exchange about the product's functions and solutions.
-This was especially in terms of the product as a system, with a participant representatively stating it was interesting to see "how it is connected", and another that they "learned a lot of things about OGVs just by reading".
-This was, however, not limited to the decomposition workshop but also the innovation workshop.
-It revealed that no team member had full confidence about the \ac{OGV}, but the confidence in the team's knowledge was higher (2.9 out of 5 for individuals vs 3.7 out of 5 for the team).
-
-%identified areas for improvement through decomposition as well as identified "do not touch"
-Almost all participants stated that through the decomposition workshop, "do not touch" areas as well as areas for improvement on the product could be identified.
-However, the need for discussion of these findings in follow-up meetings was also highlighted by most of the participants.
-
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=\textwidth]{figures/resultsDecomp.png}
-    \caption{Selected answers from the questionnaire after the decomposition workshop. Each $x$ represents one answer. If less than eight answers per question are shown, some participants did not answer.}
-    \label{fig:resultsDecomp}
-\end{figure}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Innovation}
-The innovation stage of the workshop was perceived as interesting from a knowledge capture and exchange point of view, but also as presenting a potentially valuable tool for \ac{DSE}.
-The participants enhanced the value of the "good cross-functional  discussions"that were lead in the individual development teams.
-Furthermore, several participants enhanced the need for a method such as this:
-"There are still gaps within the early concept phase", 
-
-% more solutions
-It was perceived by the participants of the workshop that the use of the \ac{FGE} approach supports the introduction of new solutions ($4$ on a scale of $1$ "no support for new solutions" to $5$ "totally supports").
-% novel solutions
-It was furthermore stated that a part of the identified \ac{DS} would probably not have been found -- or considered -- in a regular modelling approach, with a majority ($71\%$) stating "maybe some, but not all".
-The other participants stated either "none of them" or "most of them" without \ac{FGE}.
-
-% more functions 
-Beyond only exploring new solutions for existing functions, \ac{FGE} also enables the capture of newly identified functions or sub-functions.
-Practitioners feedback supports this, although the ability to integrate new solutions is supported better than that of new functions (3.8 out of 5 vs 4 out of 5).
-
-% problem with EF-M
-The use of the prototype \ac{FGE} tool has been stated to be challenging -- on a scale of 0 2.5 out of 5 after introduction, 3.5 out of 5 after use). 
-However, the increase in understanding of the approach through use hints that this can be an issue of training and/or tool quality.
-
-As a feedback of the modelling process using \ac{EF-M} to capture and represent alternative solutions, a practitioner mentioned that the re-use of existing solution's geometry is hardly possible to model.
-If, for example, the \ac{FR} "Electric grounding of vane" uses the galvanic properties of the metallic leading-edge, this relation cannot be represented in \ac{EF-M}.
-A workaround for this is to phrase the respective \ac{DS} "Use grounding vane" and model an \ac{iw} connection between them.
-%However, the second \ac{DS} would always have to act as a 'slave' in respect to the first \ac{DS} from which it "borrows" product properties. 
-However, such complex relationship modelling has not been implemented yet in the prototype tool, and does not contribute to alleviate the challenges of complexity in function modelling stated by \cite{Muller2020, Tomiyama2013}.
-
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=\textwidth]{figures/resultsInnov.png}
-    \caption{Selected answers from the questionnaire after the innovation workshop. Each $x$ represents one answer. If less than eight answers per question are shown, some participants did not answer.}
-    \label{fig:resultsInnov}
-\end{figure}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Embodiment}
-The practitioners highlighted the need for an automated concept generation approach such as presented in the workshop.
-It was stated that the "generation of CAD models based on different configurations would be a key functionality", which the \ac{FGE} aims to provide.
-The same practitioner stated that \ac{FGE}  "would be how [he] sees a solution".
-
-% Dennis: Maybe better to reduce size of EF-M but more (complex) geometry 
-The ratio of complexity between the functional domain and geometrical domain was point for critique.
-It was stated that a large function model (such as the one in the workshop became through the innovation) reduces the overview over the model.
-It was suggested to use less FR/DR elements and more, but potentially more complex, geometric modules.
-
-% meshing
-While the automated generation of CAD models was very much welcomed, it was enhanced that this is only beneficial for the product development process if the models are of sufficient quality for downstream processes.
-Several participants stated the need for continuous model surfaces to be able to apply automated meshing routines.
-Furthermore was the need for markup in terms of analysis-relevant geometry elements (such as loaded or fixed surfaces) highlighted.
-
-\subsubsection{Contribution to the product development process}
-The only negative feedback about decomposition workshop was that it was rather too late in the product development process.
-All participants stated that it was "rather late in the project", with half the participants even stating "too late in the project".
-
-% desire to do more decomposition 4.6/5
-Nonetheless, all participants stated that a similar (decomposition) workshop in for the same product would be desirable (average of $4$ on a scale of $0$ to $5$), but were rather enthusiastic about similar workshops for other products they work with (4.67 out of 5).
-
-% decomposition better sooner in the project; has actually been rather too late 
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-\end{comment}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Discussion} \label{sec:discussion}
 The \ac{FGE} approach aims to support \ac{DSE} in the conceptual product development phases through a three-phase approach, namely decomposition, innovation and embodiment.
 The approach has been evaluated in a case study with a product development team of an aerospace manufacturer.
 
 % validation of the gap
-The practitioners gave an overall positive feedback about the approach, stating that \ac{FGE} -- or a similar approach -- could provide what is needed to improve current product development practice.
+The practitioners gave an overall positive feedback about the approach, stating that \ac{FGE} -- or a similar approach -- can provide what is needed to improve current product development practice.
 The need was stated to be about \textit{capturing} and \textit{presenting} alternative solutions in a systematic way, as well as an \textit{automated generation of CAD models} ready for analysis.
-These needs match with the aim of the \ac{FGE} approach, and are also stated in \ac{DSE} literature such as \cite{Kang2011}, who name ...
+%These needs match with the aim of the \ac{FGE} approach, and are also stated in \ac{DSE} literature such as \cite{Kang2011}, who name ...
 The use of a non-geometrical modelling approach representing teleological product knowledge, "how it all connects", has been received positively by the practitioners.
-This is in line with authors such as \cite{Woodbury2006, Cohrs2014} who call for models for \ac{DSE} to carry information beyond the geometrical domain.
+This is in line with authors such as \cite{Woodbury2006, Cohrs2014, Umeda1997} who call for models for \ac{DSE} to carry information beyond the geometrical domain.
 
 % innovation support
 
@@ -889,8 +865,8 @@ However, it could also be argued that the method can only show its full contribu
 Which of these two factors predominates cannot be said at this moment.
 
 % knowledge capture
-Many participants highlighted the contribution of the method to knowledge capture and exchange inside the group.
-Although this is not among the primary objectives of \ac{FGE} method, the capture, representation and retrieval o product knowledge is beneficial to the product development process \cite{Stokes2001}.
+Many participants highlighted the contribution of the method for knowledge capture and exchange inside the group.
+Although this is not among the primary objectives of \ac{FGE} method, the capture, representation and retrieval of deseign rationale is beneficial to the product development process \cite{Stokes2001}.
 However, it can be argued that not the use of this specific method, but the general interaction of engineers of different disciplines focused on a shared product could provide this \cite{Tayal2012}.
 
 
@@ -899,7 +875,7 @@ However, it can be argued that not the use of this specific method, but the gene
 %}
 
 % validation contribution
-Albeit the results of this study can be interpreted as generally positive for the presented \ac{DSE} method in terms of user acceptance and improved \ac{DSE}, it is only a single case study, and hence difficult to generalise from \citep{Blessing2002}.
+Albeit the results of this study can be interpreted as generally positive for the presented \ac{FGE} method in terms of user acceptance and improved \ac{DSE}, it is only a single case study, and hence difficult to generalise from \citep{Blessing2002}.
 While the engineering design research community is aware of the challenge to properly validate a new method or methodology \citep{Barth2011, Almefelt2006}, this study can only be an initial step into validating \ac{FGE}.
 Similar studies with other development teams, and in other engineering domains, are required before a conclusive image of the contribution of \ac{FGE} to \ac{DSE} can be presented.
 
@@ -921,8 +897,8 @@ However, to be able to judge a significant impact of the use of method on the qu
 % \end{itemize}
 % }
 This paper presented the application of a \ac{DSE} approach combining function modelling and automated geometry model generation for the conceptual product development phases of turbofan engines.
-The modelling approach tackles the challenges of representation of alternative concepts in the design space, product knowledge capture and storage as well as support for the generation of \ac{CAD} models.
-Through the application of the approach in an engineering case, the approach has been validated to target a real problem in the conceptual development of aerospace engine components and to provide a feasible solution for it.
+The modelling approach tackles the challenges of representing alternative concepts in the design space, design rationale capture and storage as well as support for the generation of \ac{CAD} models.
+Through the application of the FGE approach in an engineering case, the method has been validated to target a real problem in the conceptual development of aerospace engine components and to provide a feasible solution for it.
 
 % application of EF-M
 Through the use of a prototype tool implementing the \ac{FGE} method, engineers in a aerospace supplier were able to share product knowledge and explore novel design solutions.
@@ -933,9 +909,9 @@ According to the statements of the product developers participating in this stud
 % critique
 % function modelling 
 The \ac{FGE} approach uses function modelling as a tool to represent the design space and perform its population.
-While this has shown to be feasible, domain specific challenges similar to as reported for example by \cite{Tomiyama2013} have shown.
+While this has shown to be feasible, domain specific challenges similar to as reported for example in \cite{Tomiyama2013} have shown.
 %While the challenges of approachability and added value, as Tomiyama identified, could be at least in parts reduced, did the practitioners still struggle with the level of abstraction and the formalism of the function modelling approach.
-This points towards further development for \ac{EF-M} modelling in terms to increase applicability and reduce abstraction.
+This points towards further development for \ac{EF-M} modelling in order to increase applicability and reduce abstraction.
 Furthermore did practitioners point out the problems of modelling a "make use of" relationship for a \ac{DS}, as described in Section \ref{sec:feedback}. Similar challenges have already been identified in \cite{Muller2020} and pointed towards further development of the \ac{EF-M} approach.
 
 % prototype tool
@@ -944,8 +920,8 @@ To a degree it has reduced the abstraction of function modelling by providing a 
 However, further studies with increased practitioner training are seen as a goal for future work.
 % embodiment
 % not relevant, since this is about impact on DSE and not embodiment 
-Albeit the embodiment process has been illustrated in \cite{Muller2020a}, further studies have to show the scalability and usability of it.
-Especially the quality of the generated CAD models -- especially in terms of \textit{meshing} -- has to be in the focus of development, since in the presented study it has been highlighted that it is crucial for analysis of the concepts.
+Albeit the embodiment process has been illustrated in \cite{Muller2020a}, further studies have to show the scalability of it.
+Especially the quality of the generated CAD models -- with a focus on \textit{meshing} -- has to be in the focus of development, since in the presented study it has been highlighted that it is crucial for analysis of the concepts.
 
 In summary, although there have been identified areas for improvement, the \ac{FGE} approach was perceived to be "one possibility to generate, and evaluate, lots of concepts" -- which is what it aims for.
 
@@ -979,12 +955,12 @@ project administration, funding acquisition: O.I.
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\funding{This work was funded in the VINNOVA project MEPHISTO and executed in collaboration with GKN Aerospace.
+\funding{This work was funded \revision{by the Swedish National Aeronautics Research Programme (NFFP) in the } project MEPHISTO and executed in collaboration with GKN Aerospace.
 %\url{https://search.crossref.org/funding}, any errors may affect your future funding.
 }
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\acknowledgments{The study presented in this publication has been performed in collaboration with GKN Aerospace Trollhättan.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\acknowledgments{The study presented in this publication has been performed in collaboration with GKN \revision{Aerospace Engine Systems Sweden}.
 }
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
