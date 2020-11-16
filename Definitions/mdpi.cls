@@ -45,7 +45,7 @@
 \RequirePackage[largestsep]{titlesec}
 \RequirePackage{etoolbox} % For \AtBeginDocument etc.
 \RequirePackage{tabto} % To use tab for alignment on first page
-\RequirePackage[table]{xcolor} % To provide color for soul (for english editing) and provide coloring for tables (author request)
+\RequirePackage[table,dvipsnames]{xcolor} % To provide color for soul (for english editing) and provide coloring for tables (author request)
 \RequirePackage{soul} % To highlight text
 \newcommand{\highlight}[1]{\colorbox{yellow}{#1}}
 \RequirePackage{multirow}
